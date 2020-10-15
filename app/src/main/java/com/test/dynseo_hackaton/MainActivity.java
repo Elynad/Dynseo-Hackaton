@@ -5,12 +5,13 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.SurfaceView;
 import android.view.View;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     // -- PROPERTIES
     // Declare an instance of SnakeEngine
@@ -35,7 +36,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Init Game View
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
         gameSurfaceView = findViewById(R.id.gameSurfaceView);
+        gameSurfaceView.getLayoutParams().width = (int)(width * 0.6) ;
+        gameSurfaceView.getLayoutParams().height = (int)(height * 0.8) ;
         gameSurfaceView.setZOrderOnTop(true);
 
         // Init D-Pad buttons
@@ -50,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
         // Initialize the result into a Point object
         Point size = new Point();
         display.getSize(size);
+        size.x = gameSurfaceView.getLayoutParams().width;
+        size.y = gameSurfaceView.getLayoutParams().height;
 
         // Create a new instance of the SnakeEngine class
         snakeEngine = new SnakeEngine(this, size, gameSurfaceView);
@@ -76,8 +85,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     // -- METHODS
-    public void dPadButtonsOnClick(View v) {
-        switch (v.getId()) {
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.up_button:
                 snakeEngine.setHeading(SnakeEngine.Heading.UP);
                 break;

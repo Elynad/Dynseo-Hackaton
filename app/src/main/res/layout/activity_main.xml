@@ -10,8 +10,8 @@
 
     <SurfaceView
         android:id="@+id/gameSurfaceView"
-        android:layout_width="700dp"
-        android:layout_height="500dp"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
         android:layout_marginStart="25dp"
         android:layout_marginLeft="25dp"
         android:background="@drawable/rectangle_border_view"
@@ -35,7 +35,7 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:background="@drawable/arrow_up"
-            android:onClick="dPadButtonsOnClick"
+            android:onClick="onClick"
             tools:layout_editor_absoluteX="805dp"
             tools:layout_editor_absoluteY="324dp" />
 
@@ -45,7 +45,7 @@
             android:layout_height="70dp"
             android:layout_marginTop="64dp"
             android:background="@drawable/arrow_down"
-            android:onClick="dPadButtonsOnClick"
+            android:onClick="onClick"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:layout_editor_absoluteX="805dp" />
 
@@ -57,7 +57,7 @@
         android:layout_height="70dp"
         android:layout_marginBottom="140dp"
         android:background="@drawable/arrow_left"
-        android:onClick="dPadButtonsOnClick"
+        android:onClick="onClick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout" />
 
@@ -67,7 +67,7 @@
         android:layout_height="70dp"
         android:layout_marginBottom="140dp"
         android:background="@drawable/arrow_right"
-        android:onClick="dPadButtonsOnClick"
+        android:onClick="onClick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/linearLayout" />
 
