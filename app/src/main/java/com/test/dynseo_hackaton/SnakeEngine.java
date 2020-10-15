@@ -192,7 +192,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     public void newGame() {
 
         // Start with a single snake segment
-        snakeLength = 1 ;
+        snakeLength = 3 ;
         snakeXs[0] = NUM_BLOCKS_WIDE / 2 ;
         snakeYs[0] = numBlocksHigh / 2 ;
 
