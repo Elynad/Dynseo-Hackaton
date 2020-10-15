@@ -10,8 +10,8 @@
 
     <SurfaceView
         android:id="@+id/gameSurfaceView"
-        android:layout_width="700dp"
-        android:layout_height="500dp"
+        android:layout_width="986dp"
+        android:layout_height="781dp"
         android:layout_marginStart="25dp"
         android:layout_marginLeft="25dp"
         android:background="@drawable/rectangle_border_view"

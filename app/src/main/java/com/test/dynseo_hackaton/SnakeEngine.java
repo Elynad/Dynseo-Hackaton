@@ -314,10 +314,10 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             canvas.drawColor(Color.argb(255, 26, 128, 182)); // TODO : Set correct colors
 
             // Set the color of the paint to draw the snake
-            paint.setColor(Color.argb(255, 255, 255, 255)); // TODO : Set correct color
+            paint.setColor(Color.argb(255, 0, 0, 0)); // TODO : Set correct color
 
             // Scale the HUD text
-            paint.setTextSize(90) ;
+            paint.setTextSize(70) ;
             canvas.drawText("Score : " + score, 10, 70, paint); // TODO : Might be useless, use Stim'Art score display
 
             // Draw the snake one block at a time
@@ -372,4 +372,5 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     public void setHeading(Heading heading) {
         this.heading = heading ;
     }
+
 }

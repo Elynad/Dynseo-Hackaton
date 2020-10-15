@@ -1,10 +1,14 @@
 package com.test.dynseo_hackaton;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
 import android.graphics.Point;
+import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.SurfaceView;
 import android.view.View;
@@ -53,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Create a new instance of the SnakeEngine class
         snakeEngine = new SnakeEngine(this, size, gameSurfaceView);
-
 
         // Make snakeEngine the view of the Activity
         //setContentView(snakeEngine);
