@@ -216,6 +216,12 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         soundPool.play(eatPrey, 1, 1, 0, 0, 1);
     }
 
+    /**
+     *  The for loop starts at the last block of the snake in [snakeXs] and [snakeYs] and advance it
+     *  into the location previously occupied by the block ahead of it.
+     *  To move the head we switch on the current value of [heading] and add or substract 1 from
+     *  either the heads vertical of horizontal position.
+     */
     private void moveSnake() {
         // Move the body
         for (int i = snakeLength ; i > 0 ; i--) {
@@ -244,5 +250,121 @@ public class SnakeEngine extends SurfaceView implements Runnable {
                 snakeXs[0]-- ;
                 break ;
         }
+    }
+
+    /**
+     *  Handle collision detection. Check if the snake head bumped into the edge of the screen, and
+     *  check if the snake head bumped into the snake's body.
+     *  @return boolean - True if the snake is dead.
+     */
+    private boolean detectDeath() {
+        boolean isDead = false ;
+
+        // Hit the screen edges
+        if (snakeXs[0] == -1 || snakeXs[0] >= NUM_BLOCKS_WIDE
+                || snakeYs[0] == -1 || snakeYs[0] == numBlocksHigh)
+            isDead = true ;
+
+        // Hit its own body
+        for (int i = snakeLength - 1 ; i > 0 ; i--) {
+            if ((i > 4) && (snakeXs[0] == snakeXs[i]) && (snakeYs[0] == snakeYs[i])) {
+                isDead = true;
+                break;
+            }
+        }
+
+        return isDead ;
+    }
+
+    /**
+     *  Checks if the head has touched the prey. If it does, then [eatPrey()] method is call.
+     *  Calls [moveSnake()] method.
+     *  Calls [detectDeath()] method, if it returns [true] a sound is played and the game begins
+     *  again.
+     */
+    public void update() {
+        // Did the head touched the prey ?
+        if (snakeXs[0] == preyX && snakeYs[0] == preyY)
+            eatPrey();
+
+        moveSnake();
+
+        if (detectDeath()) {
+            soundPool.play(snakeCrash, 1, 1, 0, 0, 1);
+
+            newGame();  // TODO : End the game ?
+        }
+    }
+
+    /**
+     *  First, we lock the surface as required by Android. If it works, we clear the screen with
+     *  [drawColor()] and change the color of all future objects, for the snake and for the prey.
+     *  We use a for loop to draw a block to represent each block of the snake. The code positions
+     *  the blocks to screen coordinates by using their grid position (contained in the array)
+     *  multiplied by [blockSize] (which was determined in the constructor based on screen
+     *  resolution).
+     *  Then, draw a single block to represent the prey.
+     */
+    public void draw() {
+        // Get a lock on the canvas
+        if (surfaceHolder.getSurface().isValid()) {
+            canvas = surfaceHolder.lockCanvas();
+
+            // Fill the screen with color
+            canvas.drawColor(Color.argb(255, 26, 128, 182)); // TODO : Set correct colors
+
+            // Set the color of the paint to draw the snake
+            paint.setColor(Color.argb(255, 255, 255, 255)); // TODO : Set correct color
+
+            // Scale the HUD text
+            paint.setTextSize(90) ;
+            canvas.drawText("Score : " + score, 10, 70, paint); // TODO : Might be useless, use Stim'Art score display
+
+            // Draw the snake one block at a time
+            for (int i = 0 ; i < snakeLength ; i++) {
+                // TODO : Draw our custom sprite instead
+                canvas.drawRect(
+                        snakeXs[i] * blockSize,
+                        (snakeYs[i] * blockSize),
+                        (snakeXs[i] * blockSize) + blockSize,
+                        (snakeYs[i] * blockSize) + blockSize,
+                        paint);
+            }
+
+            // Set the color of the paint to draw the prey
+            paint.setColor(Color.argb(255, 255, 0, 0)); // TODO : Set correct colors
+
+            // Draw the prey
+            canvas.drawRect(
+                    preyX * blockSize,
+                    (preyY * blockSize),
+                    (preyX * blockSize) + blockSize,
+                    (preyY * blockSize) + blockSize,
+                    paint
+            );
+
+            // Unlock the canvas and reveal the graphics for this frame
+            surfaceHolder.unlockCanvasAndPost(canvas);
+        }
+    }
+
+    /**
+     *  Checks if [nextFrameTime] variable has been exceeded by the actual current time. If it does,
+     *  then a new time is retrieved and put back in [nextFrameTime].
+     *  @return boolean - True if we need to execute draw and update.
+     */
+    public boolean updateRequired() {
+        // Are we due to update the frame ?
+        if (nextFrameTime <= System.currentTimeMillis()) {
+            // Tenth of a second has passed
+
+            // Setup when the next update will be triggered
+            nextFrameTime = System.currentTimeMillis() + MILLIS_PER_SECOND / FPS ;
+
+            // Returns true so [update()] & [draw()] functions are returned
+            return true ;
+        }
+
+        return false ;
     }
 }
