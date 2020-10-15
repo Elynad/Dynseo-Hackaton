@@ -1,8 +1,6 @@
-
-REpackage com.test.dynseo_hackaton;
+package com.test.dynseo_hackaton;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 
 public class MainActivity extends AppCompatActivity {
