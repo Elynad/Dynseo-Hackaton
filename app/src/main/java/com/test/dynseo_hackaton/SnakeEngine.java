@@ -9,6 +9,9 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import android.content.res.AssetManager;
 import android.graphics.Canvas;
@@ -47,6 +50,9 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     // Snake size
     private int snakeLength ;
 
+    // Obstacle count
+    private int obstaclesCount ;
+
     // Prey position
     private int preyX ;
     private int preyY ;
@@ -67,13 +73,17 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     // Number of points
     private int score ;
 
-    /* Location in the grid of all segments */
+    /* Location in the grid of all segments of the snake */
 
     // snakeXs will hold the horizontal coordinates of each segment of the snake
     private int[] snakeXs ;
 
     // snakeYs will hold the vertical coordinates of each segment of the snake.
     private int[] snakeYs ;
+
+    /* Obstacles */
+    private ArrayList<Integer> obstacleXs ;
+    private ArrayList<Integer> obstacleYs ;
 
     /* DRAWING */
 
@@ -126,6 +136,10 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         // If you score 200 you are rewarded with a crash achievement
         snakeXs = new int[200] ;
         snakeYs = new int[200] ;
+
+        // Initialize obstacles
+        obstacleXs = new ArrayList<>() ;
+        obstacleYs = new ArrayList<>() ;
 
         // Start the game
         newGame();
@@ -206,12 +220,33 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     }
 
     /**
+     *  Use two random int values to create random location for obstacles.
+     */
+    public void spawnObstacle() {
+        // The number of obstacles is the score divided by 10.
+        obstaclesCount = score / 10;
+        Log.d(TAG, "obstaclesXs size = " + obstacleXs.size() + " ; obstaclesCount = " + obstaclesCount);
+        for (int i = obstacleXs.size() ; i < obstaclesCount - obstacleXs.size() ; i++) {
+             Log.d(TAG, "Trying to insert new element at index " + i) ;
+            Random random = new Random() ;
+            obstacleXs.add(i, random.nextInt(NUM_BLOCKS_WIDE - 1) + 1);
+            obstacleYs.add(i, random.nextInt(numBlocksHigh - 1) + 1);
+
+            // If the obstacle is on the same point than the prey, decrease i to generate new
+            // random points.
+            if (obstacleXs.get(i) == preyX && obstacleYs.get(i) == preyY)
+                i-- ;
+        }
+    }
+
+    /**
      *  The snake's length is increased by one block, a new prey is spawned, 1 is added to the score
      *  and a sound effect is played.
      */
     private void eatPrey() {
         snakeLength++ ;
         spawnPrey();
+        spawnObstacle();
         score += 1 ;
         soundPool.play(eatPrey, 1, 1, 0, 0, 1);
     }
@@ -270,6 +305,14 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             if ((i > 4) && (snakeXs[0] == snakeXs[i]) && (snakeYs[0] == snakeYs[i])) {
                 isDead = true;
                 break;
+            }
+        }
+
+        // Hit an obstacle
+        for (int i = 0 ; i < obstaclesCount ; i++) {
+            if (snakeXs[0] == obstacleXs.get(i) && snakeYs[0] == obstacleYs.get(i)) {
+                isDead = true;
+                break ;
             }
         }
 
@@ -344,6 +387,21 @@ public class SnakeEngine extends SurfaceView implements Runnable {
                     paint
             );
 
+            // Set the color of the paint to draw obstacles
+            paint.setColor(Color.argb(255, 0, 0, 0));
+
+            // Draw the obstacles
+            for (int i = 0 ; i < obstaclesCount ; i++) {
+                // TODO : Draw our custom sprite instead
+                canvas.drawRect(
+                        obstacleXs.get(i) * blockSize,
+                        (obstacleYs.get(i) * blockSize),
+                        (obstacleXs.get(i) * blockSize) + blockSize,
+                        (obstacleYs.get(i) * blockSize) + blockSize,
+                        paint
+                );
+            }
+
             // Unlock the canvas and reveal the graphics for this frame
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
@@ -369,8 +427,27 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         return false ;
     }
 
-    public void setHeading(Heading heading) {
-        this.heading = heading ;
+    public void setHeading(int id) {
+        switch (id) {
+            case R.id.up_button:
+                if (heading != Heading.DOWN)
+                    heading = Heading.UP ;
+                break;
+            case R.id.down_button:
+                if (heading != Heading.UP)
+                    heading = Heading.DOWN ;
+                break;
+            case R.id.right_button:
+                if (heading != Heading.LEFT)
+                    heading = Heading.RIGHT ;
+                break;
+            case R.id.left_button:
+                if (heading != Heading.RIGHT)
+                    heading = Heading.LEFT ;
+                break;
+            default:
+                break;
+        }
     }
 
 }
