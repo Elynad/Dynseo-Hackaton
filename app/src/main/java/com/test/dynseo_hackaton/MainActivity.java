@@ -51,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
         snakeEngine = new SnakeEngine(this, size);
 
         // Make snakeEngine the view of the Activity
-        setContentView(snakeEngine);
+    //    setContentView(snakeEngine);
+
 
     }
 
