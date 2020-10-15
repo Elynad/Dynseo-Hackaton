@@ -367,4 +367,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
         return false ;
     }
+
+    public void setHeading(Heading heading) {
+        this.heading = heading ;
+    }
 }
