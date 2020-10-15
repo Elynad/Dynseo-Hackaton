@@ -1,15 +1,22 @@
 package com.test.dynseo_hackaton;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Point;
 import android.os.Bundle;
+import android.view.Display;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
     // -- PROPERTIES
+    // Declare an instance of SnakeEngine
+    private SnakeEngine snakeEngine;
+
     // UI
-    private View gameView;
+    private SurfaceView gameSurfaceView;
 
     // D-PAD BUTTONS
     private Button upButton;
@@ -27,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Init Game View
-        gameView = findViewById(R.id.gameView);
+        gameSurfaceView = findViewById(R.id.gameSurfaceView);
+        gameSurfaceView.setZOrderOnTop(true);
 
         // Init D-Pad buttons
         upButton = findViewById(R.id.up_button);
@@ -35,22 +43,50 @@ public class MainActivity extends AppCompatActivity {
         leftButton = findViewById(R.id.left_button);
         rightButton = findViewById(R.id.right_button);
 
+        // Get the pixel dimensions of the screen
+        Display display = getWindowManager().getDefaultDisplay();
+
+        // Initialize the result into a Point object
+        Point size = new Point();
+        display.getSize(size);
+
+        // Create a new instance of the SnakeEngine class
+        snakeEngine = new SnakeEngine(this, size, gameSurfaceView);
+
+
+        // Make snakeEngine the view of the Activity
+        //setContentView(snakeEngine);
+
+    }
+
+    // Start the thread in snakeEngine
+    @Override
+    protected void onResume() {
+        super.onResume();
+        snakeEngine.resume();
+    }
+
+    // Stop the thread in snakeEngine
+    @Override
+    protected void onPause() {
+        super.onPause();
+        snakeEngine.pause();
     }
 
 
     // -- METHODS
     public void dPadButtonsOnClick(View v) {
         switch (v.getId()) {
-            case upButton:
+            case R.id.up_button:
                 //heading = Heading.UP;
                 break;
-            case downButton:
+            case R.id.down_button:
                 //doSomething3();
                 break;
-            case rightButton:
+            case R.id.right_button:
                 //doSomething4();
                 break;
-            case leftButton:
+            case R.id.left_button:
                 //doSomething5();
                 break;
             default:

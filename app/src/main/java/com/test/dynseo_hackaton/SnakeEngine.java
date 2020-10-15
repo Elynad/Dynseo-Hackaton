@@ -6,7 +6,6 @@ import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import java.io.IOException;
@@ -90,7 +89,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     // Some paint for our canvas
     private Paint paint ;
 
-    public SnakeEngine(Context context, Point size) {
+    public SnakeEngine(Context context, Point size, SurfaceView gameSurfaceView) {
         super(context) ;
 
         this.context = context ;
@@ -120,7 +119,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         }
 
         // Initialize the drawing objects
-        surfaceHolder = getHolder();
+        surfaceHolder = gameSurfaceView.getHolder();
+        //surfaceHolder = getHolder();
         paint = new Paint();
 
         // If you score 200 you are rewarded with a crash achievement
@@ -328,7 +328,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
                         (snakeYs[i] * blockSize),
                         (snakeXs[i] * blockSize) + blockSize,
                         (snakeYs[i] * blockSize) + blockSize,
-                        paint);
+                        paint
+                );
             }
 
             // Set the color of the paint to draw the prey

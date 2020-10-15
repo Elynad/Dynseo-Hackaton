@@ -8,8 +8,8 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <View
-        android:id="@+id/gameView"
+    <SurfaceView
+        android:id="@+id/gameSurfaceView"
         android:layout_width="700dp"
         android:layout_height="500dp"
         android:layout_marginStart="25dp"
