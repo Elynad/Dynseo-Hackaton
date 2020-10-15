@@ -87,22 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // -- METHODS
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.up_button:
-                snakeEngine.setHeading(SnakeEngine.Heading.UP);
-                break;
-            case R.id.down_button:
-                snakeEngine.setHeading(SnakeEngine.Heading.DOWN);
-                break;
-            case R.id.right_button:
-                snakeEngine.setHeading(SnakeEngine.Heading.RIGHT);
-                break;
-            case R.id.left_button:
-                snakeEngine.setHeading(SnakeEngine.Heading.LEFT);
-                break;
-            default:
-                break;
-        }
+        snakeEngine.setHeading(view.getId());
     }
 
 }
