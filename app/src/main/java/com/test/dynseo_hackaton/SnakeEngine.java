@@ -186,7 +186,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         spawnPrey() ;
 
         // Reset the score
-        score = 0 ;
+        score = 0;
 
         // Setup nextFrameTime so an update is triggered
         nextFrameTime = System.currentTimeMillis() ;
