@@ -199,9 +199,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         // Get the prey ready for dinner
         spawnPrey() ;
 
-        // Generate obstacles
-        spawnObstacle() ;
-
         // Reset the score
         score = 0;
 
@@ -228,7 +225,9 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     public void spawnObstacle() {
         // The number of obstacles is the score divided by 10.
         obstaclesCount = score / 10;
-        for (int i = 0 ; i < obstaclesCount ; i++) {
+        Log.d(TAG, "obstaclesXs size = " + obstacleXs.size() + " ; obstaclesCount = " + obstaclesCount);
+        for (int i = obstacleXs.size() ; i < obstaclesCount - obstacleXs.size() ; i++) {
+             Log.d(TAG, "Trying to insert new element at index " + i) ;
             Random random = new Random() ;
             obstacleXs.add(i, random.nextInt(NUM_BLOCKS_WIDE - 1) + 1);
             obstacleYs.add(i, random.nextInt(numBlocksHigh - 1) + 1);
