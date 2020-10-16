@@ -18,6 +18,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final static String TAG = "MainActivity" ;
 
     // -- PROPERTIES
+    int gameLevel ;
+
     // Declare an instance of SnakeEngine
     private SnakeEngine snakeEngine;
 
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        gameLevel = this.getIntent().getIntExtra(getString(R.string.level_param), 0);
 
         // Init game layout
         setContentView(R.layout.activity_main);
@@ -64,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         size.y = gameSurfaceView.getLayoutParams().height;
 
         // Create a new instance of the SnakeEngine class
-        snakeEngine = new SnakeEngine(this, size, gameSurfaceView);
+        snakeEngine = new SnakeEngine(this, size, gameSurfaceView, gameLevel);
 
     }
 

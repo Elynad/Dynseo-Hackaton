@@ -1,5 +1,6 @@
 package com.test.dynseo_hackaton;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -28,6 +29,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private Thread thread = null ;
 
     private Context context ;
+
+    int level ;
 
     private Random random ;
 
@@ -58,7 +61,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private long nextFrameTime ;
 
     // Update the game 10 times per second
-    private final long FPS = 7 ;
+    private long fps = 7 ;
     private final long MILLIS_PER_SECOND = 1000 ; // TODO : Might be useless
 
     // Number of points
@@ -100,10 +103,11 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
 
     // -- INIT
-    public SnakeEngine(Context context, Point size, SurfaceView gameSurfaceView) {
+    public SnakeEngine(Context context, Point size, SurfaceView gameSurfaceView, int level) {
         super(context) ;
 
         this.context = context ;
+        this.level = level ;
 
         random = new Random() ;
 
@@ -200,6 +204,9 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         score = 0;
         ((MainActivity)context).setScore(score);
 
+        // Reset the game speed
+        fps = context.getResources().getIntArray(R.array.game_base_speed)[level];
+
         // Setup nextFrameTime so an update is triggered
         nextFrameTime = System.currentTimeMillis() ;
         obstacleXs.clear();
@@ -232,7 +239,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         // The number of obstacles is the score divided by 10.
         obstaclesCount = score / 10;
 
-
         int i = obstacleXs.size() - 1;
         if (i < 0)
             i = 0;
@@ -256,10 +262,13 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private void eatPrey() {
         snakeLength++ ;
         spawnPrey();
-        spawnObstacle();
+        if (level > 1)
+            spawnObstacle();
         score += 1 ;
         ((MainActivity) context).setScore(score);
         eatPreyMediaPlayer.start();
+        if (score % 10 == 0)
+            fps++ ;
     }
 
     /**
@@ -456,7 +465,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             // Tenth of a second has passed
 
             // Setup when the next update will be triggered
-            nextFrameTime = System.currentTimeMillis() + MILLIS_PER_SECOND / FPS ;
+            nextFrameTime = System.currentTimeMillis() + MILLIS_PER_SECOND / fps;
 
             // Returns true so [update()] & [draw()] functions are returned
             return true ;

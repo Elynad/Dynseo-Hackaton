@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Dynseo_Hackaton</string>
     <string name="score">Score : </string>
+
+    <!-- Buttons -->
+    <string name="easy">Easy</string>
+    <string name="medium">Medium</string>
+    <string name="hard">Hard</string>
+
+    <!-- Tags -->
+    <string name="level_param">LEVEL_PARAM</string>
 </resources>
