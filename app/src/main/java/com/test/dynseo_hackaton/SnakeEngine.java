@@ -227,32 +227,47 @@ public class SnakeEngine extends SurfaceView implements Runnable {
      *  Use two random int values : The first between 0 and [NUM_BLOCKS_WIDE] range ; the second
      *  between 0 and [numBlocksHigh].
      *  These two random values are used to setup the horizontal and vertical location of the prey.
-     *  TODO :  Optimization : Instancing a new instance of [Random] is slow and could be done in
-     *  TODO :      constructor.
+     *  Also randomly decide which prey asset we are going to use.
      */
     public void spawnPrey() {
-        preyX = random.nextInt(NUM_BLOCKS_WIDE - 1) + 1;
-        preyY = random.nextInt(numBlocksHigh - 1) + 1 ;
+        boolean correctSpawn = false ;
 
-        for (int i = 0 ; i < snakeLength ; i++) {
-            if (snakeXs[i] == preyX && snakeYs[i] == preyY)
-                spawnPrey();
+        while (!correctSpawn) {
+            preysDrawableIndex = random.nextInt(preys.size());
+            preyX = random.nextInt(NUM_BLOCKS_WIDE - 1) + 1;
+            preyY = random.nextInt(numBlocksHigh - 1) + 1;
+            correctSpawn = true ;
+
+            // Check if the prey spawned on the snakes body. If it does, generate new random positions.
+            for (int i = 0; i < snakeLength; i++) {
+                if (snakeXs[i] == preyX && snakeYs[i] == preyY) {
+                    correctSpawn = false;
+                    break ;
+                }
+            }
+            for (int i = 0; i < obstaclesCount; i++) {
+                if (obstacleXs.get(i) == preyX && obstacleYs.get(i) == preyY) {
+                    correctSpawn = false;
+                    break ;
+                }
+            }
+            Log.d(TAG, "Prey should have spawned at " + preyX + " : " + preyY);
         }
-        preysDrawableIndex = random.nextInt(preys.size());
     }
 
     /**
      *  Use two random int values to create random location for obstacles.
+     *  The number of obstacle shall be the score divided by 10 (1 obstacle for every 10 points).
      */
     public void spawnObstacle() {
-        // The number of obstacles is the score divided by 10.
-        obstaclesCount = score / 10;
+        // The number of obstacles is the score divided by 10 for medium, divided by 5 for hard.
+        obstaclesCount = score / (10 / level);
+        int obstaclesToSpawnCount = obstaclesCount - obstacleXs.size() ;
+        Log.d(TAG, "Obstacles to spawn count = " + obstaclesToSpawnCount) ;
 
-        int i = obstacleXs.size() - 1;
-        if (i < 0)
-            i = 0;
+        int i = 0 ;
         Log.d(TAG, "obstaclesXs size = " + obstacleXs.size() + " ; obstaclesCount = " + obstaclesCount);
-        while (i < obstaclesCount) {
+        while (i < obstaclesToSpawnCount) {
             Log.d(TAG, "Trying to insert new element at index " + i) ;
             obstacleXs.add(random.nextInt(NUM_BLOCKS_WIDE - 1) + 1);
             obstacleYs.add(random.nextInt(numBlocksHigh - 1) + 1);
@@ -260,6 +275,14 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             // random points.
             if (obstacleXs.get(i) == preyX && obstacleYs.get(i) == preyY)
                 i-- ;
+            // If the obstacle is on the same point than the snake, decrease i to generate new
+            // random points.
+            for (int j = 0 ; j < snakeLength ; j++) {
+                if (obstacleXs.get(i) == snakeXs[j] && obstacleYs.get(i) == snakeYs[j]) {
+                    i--;
+                    break;
+                }
+            }
             i++;
         }
     }
