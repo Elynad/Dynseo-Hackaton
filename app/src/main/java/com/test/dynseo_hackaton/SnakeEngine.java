@@ -3,6 +3,7 @@ package com.test.dynseo_hackaton;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
@@ -17,6 +18,8 @@ import android.content.res.AssetManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+
+import androidx.core.content.res.ResourcesCompat;
 
 public class SnakeEngine extends SurfaceView implements Runnable {
 
@@ -376,8 +379,30 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             paint.setTextSize(70) ;
             canvas.drawText("Score : " + score, 10, 70, paint); // TODO : Might be useless, use Stim'Art score display
 
+            // Draw the head of the snake, given the direction
+            int drawableId = 0 ;
+            switch (heading) {
+                case UP:
+                    drawableId = R.drawable.snake_head_up ;
+                    break ;
+                case RIGHT:
+                    drawableId = R.drawable.snake_head_right ;
+                    break ;
+                case DOWN:
+                    drawableId = R.drawable.snake_head_down ;
+                    break ;
+                case LEFT:
+                    drawableId = R.drawable.snake_head_left ;
+                    break ;
+            }
+            Drawable drawable = ResourcesCompat.getDrawable(getResources(), drawableId, null) ;
+            drawable.setBounds(snakeXs[0] * blockSize, snakeYs[0] * blockSize,
+                    (snakeXs[0] * blockSize) + blockSize,
+                    (snakeYs[0] * blockSize) + blockSize);
+            drawable.draw(canvas);
+
             // Draw the snake one block at a time
-            for (int i = 0 ; i < snakeLength ; i++) {
+            for (int i = 1 ; i < snakeLength ; i++) {
                 // TODO : Draw our custom sprite instead
                 canvas.drawRect(
                         snakeXs[i] * blockSize,
