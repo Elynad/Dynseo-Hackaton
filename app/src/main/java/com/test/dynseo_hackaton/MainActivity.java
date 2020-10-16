@@ -2,8 +2,9 @@ package com.test.dynseo_hackaton;
 
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
 
+import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -19,13 +20,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SnakeEngine snakeEngine;
 
     // UI
-    private SurfaceView gameSurfaceView;
-
-    // D-PAD BUTTONS
-    private AppCompatButton upButton;
-    private AppCompatButton downButton;
-    private AppCompatButton leftButton;
-    private AppCompatButton rightButton;
+    private AppCompatTextView scoreTextView;
 
 
     // -- VIEW LIFE CYCLE
@@ -36,21 +31,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Init game layout
         setContentView(R.layout.activity_main);
 
-        // Init Game View
+        // Init Game Surface View
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
-        gameSurfaceView = findViewById(R.id.gameSurfaceView);
+
+        SurfaceView gameSurfaceView = findViewById(R.id.game_surface_view);
         gameSurfaceView.getLayoutParams().width = (int)(width * 0.6) ;
         gameSurfaceView.getLayoutParams().height = (int)(height * 0.8) ;
         gameSurfaceView.setZOrderOnTop(true);
+        gameSurfaceView.getHolder().setFormat(PixelFormat.TRANSPARENT);
 
-        // Init D-Pad buttons
-        upButton = findViewById(R.id.up_button);
-        downButton = findViewById(R.id.down_button);
-        leftButton = findViewById(R.id.left_button);
-        rightButton = findViewById(R.id.right_button);
+        // Init Score text view
+        scoreTextView = findViewById(R.id.score_text_view);
 
         // Get the pixel dimensions of the screen
         Display display = getWindowManager().getDefaultDisplay();
@@ -63,9 +57,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // Create a new instance of the SnakeEngine class
         snakeEngine = new SnakeEngine(this, size, gameSurfaceView);
-
-        // Make snakeEngine the view of the Activity
-        //setContentView(snakeEngine);
 
     }
 
@@ -88,6 +79,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         snakeEngine.setHeading(view.getId());
+    }
+
+    public void setScore(final int score) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                scoreTextView.setText(R.string.score + score) ;
+            }
+        });
     }
 
 }
