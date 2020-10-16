@@ -380,37 +380,40 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             canvas.drawText("Score : " + score, 10, 70, paint); // TODO : Might be useless, use Stim'Art score display
 
             // Draw the head of the snake, given the direction
-            int drawableId = 0 ;
+            int headDrawableId = 0 ;
             switch (heading) {
                 case UP:
-                    drawableId = R.drawable.snake_head_up ;
+                    headDrawableId = R.drawable.snake_head_up ;
                     break ;
                 case RIGHT:
-                    drawableId = R.drawable.snake_head_right ;
+                    headDrawableId = R.drawable.snake_head_right ;
                     break ;
                 case DOWN:
-                    drawableId = R.drawable.snake_head_down ;
+                    headDrawableId = R.drawable.snake_head_down ;
                     break ;
                 case LEFT:
-                    drawableId = R.drawable.snake_head_left ;
+                    headDrawableId = R.drawable.snake_head_left ;
                     break ;
             }
-            Drawable drawable = ResourcesCompat.getDrawable(getResources(), drawableId, null) ;
-            drawable.setBounds(snakeXs[0] * blockSize, snakeYs[0] * blockSize,
+            Drawable drawable = ResourcesCompat.getDrawable(getResources(), headDrawableId, null) ;
+            drawable.setBounds(
+                    snakeXs[0] * blockSize,
+                    snakeYs[0] * blockSize,
                     (snakeXs[0] * blockSize) + blockSize,
                     (snakeYs[0] * blockSize) + blockSize);
             drawable.draw(canvas);
 
             // Draw the snake one block at a time
-            for (int i = 1 ; i < snakeLength ; i++) {
-                // TODO : Draw our custom sprite instead
-                canvas.drawRect(
-                        snakeXs[i] * blockSize,
-                        (snakeYs[i] * blockSize),
-                        (snakeXs[i] * blockSize) + blockSize,
-                        (snakeYs[i] * blockSize) + blockSize,
-                        paint
-                );
+            int j = 1 ;
+            while (j < snakeLength) {
+                drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.snake_body, null);
+                drawable.setBounds(
+                        snakeXs[j] * blockSize,
+                        snakeYs[j] * blockSize,
+                        (snakeXs[j] * blockSize) + blockSize,
+                        (snakeYs[j] * blockSize) + blockSize);
+                drawable.draw(canvas);
+                j++;
             }
 
             // Set the color of the paint to draw the prey
