@@ -262,13 +262,13 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private void eatPrey() {
         snakeLength++ ;
         spawnPrey();
-        if (level > 1)
+        if (level > 0)
             spawnObstacle();
         score += 1 ;
         ((MainActivity) context).setScore(score);
         eatPreyMediaPlayer.start();
         if (score % 10 == 0)
-            fps++ ;
+            fps += (level / 4) ;
     }
 
     /**
