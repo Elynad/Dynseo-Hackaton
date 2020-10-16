@@ -251,6 +251,14 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             // random points.
             if (obstacleXs.get(i) == preyX && obstacleYs.get(i) == preyY)
                 i-- ;
+            // If the obstacle is on the same point than the snake, decrease i to generate new
+            // random points.
+            for (int j = 0 ; j < snakeLength ; j++) {
+                if (obstacleXs.get(i) == snakeXs[j] && obstacleYs.get(i) == snakeYs[j]) {
+                    i--;
+                    break;
+                }
+            }
             i++;
         }
     }
