@@ -221,14 +221,29 @@ public class SnakeEngine extends SurfaceView implements Runnable {
      *  Also randomly decide which prey asset we are going to use.
      */
     public void spawnPrey() {
-        preyX = random.nextInt(NUM_BLOCKS_WIDE - 1) + 1;
-        preyY = random.nextInt(numBlocksHigh - 1) + 1 ;
+        boolean correctSpawn = false ;
 
-        for (int i = 0 ; i < snakeLength ; i++) {
-            if (snakeXs[i] == preyX && snakeYs[i] == preyY)
-                spawnPrey();
+        while (!correctSpawn) {
+            preysDrawableIndex = random.nextInt(preys.size());
+            preyX = random.nextInt(NUM_BLOCKS_WIDE - 1) + 1;
+            preyY = random.nextInt(numBlocksHigh - 1) + 1;
+            correctSpawn = true ;
+
+            // Check if the prey spawned on the snakes body. If it does, generate new random positions.
+            for (int i = 0; i < snakeLength; i++) {
+                if (snakeXs[i] == preyX && snakeYs[i] == preyY) {
+                    correctSpawn = false;
+                    break ;
+                }
+            }
+            for (int i = 0; i < obstaclesCount; i++) {
+                if (obstacleXs.get(i) == preyX && obstacleYs.get(i) == preyY) {
+                    correctSpawn = false;
+                    break ;
+                }
+            }
+            Log.d(TAG, "Prey should have spawned at " + preyX + " : " + preyY);
         }
-        preysDrawableIndex = random.nextInt(preys.size());
     }
 
     /**
