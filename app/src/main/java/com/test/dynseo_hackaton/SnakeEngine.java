@@ -218,8 +218,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
      *  Use two random int values : The first between 0 and [NUM_BLOCKS_WIDE] range ; the second
      *  between 0 and [numBlocksHigh].
      *  These two random values are used to setup the horizontal and vertical location of the prey.
-     *  TODO :  Optimization : Instancing a new instance of [Random] is slow and could be done in
-     *  TODO :      constructor.
+     *  Also randomly decide which prey asset we are going to use.
      */
     public void spawnPrey() {
         preyX = random.nextInt(NUM_BLOCKS_WIDE - 1) + 1;
@@ -234,16 +233,17 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
     /**
      *  Use two random int values to create random location for obstacles.
+     *  The number of obstacle shall be the score divided by 10 (1 obstacle for every 10 points).
      */
     public void spawnObstacle() {
         // The number of obstacles is the score divided by 10.
         obstaclesCount = score / 10;
+        int obstaclesToSpawnCount = obstaclesCount - obstacleXs.size() ;
+        Log.d(TAG, "Obstacles to spawn count = " + obstaclesToSpawnCount) ;
 
-        int i = obstacleXs.size() - 1;
-        if (i < 0)
-            i = 0;
+        int i = 0 ;
         Log.d(TAG, "obstaclesXs size = " + obstacleXs.size() + " ; obstaclesCount = " + obstaclesCount);
-        while (i < obstaclesCount) {
+        while (i < obstaclesToSpawnCount) {
             Log.d(TAG, "Trying to insert new element at index " + i) ;
             obstacleXs.add(random.nextInt(NUM_BLOCKS_WIDE - 1) + 1);
             obstacleYs.add(random.nextInt(numBlocksHigh - 1) + 1);
