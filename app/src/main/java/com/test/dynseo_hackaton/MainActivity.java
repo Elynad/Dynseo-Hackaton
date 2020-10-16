@@ -28,6 +28,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private AppCompatButton downButton;
     private AppCompatButton leftButton;
     private AppCompatButton rightButton;
+    private AppCompatButton pauseButton;
+    private AppCompatButton pauseResumeButton;
+    private AppCompatButton pauseQuitButton;
 
 
     // -- VIEW LIFE CYCLE
@@ -49,14 +52,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gameSurfaceView.setZOrderOnTop(true);
 
         // Init D-Pad buttons
-        upButton = findViewById(R.id.up_button);
-        downButton = findViewById(R.id.down_button);
-        leftButton = findViewById(R.id.left_button);
-        rightButton = findViewById(R.id.right_button);
+
+        pauseButton = findViewById(R.id.pause_button);
 
         // Get the pixel dimensions of the screen
         Display display = getWindowManager().getDefaultDisplay();
-
         // Initialize the result into a Point object
         Point size = new Point();
         display.getSize(size);

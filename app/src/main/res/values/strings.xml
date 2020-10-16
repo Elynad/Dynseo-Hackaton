@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Dynseo_Hackaton</string>
+    <string name="resume_game">Resume</string>
+    <string name="quit_game">Quit</string>
+    <string name="pause_message">Do you wanna quit ?</string>
+    <string name="pause_title">Paused</string>
 </resources>

@@ -1,6 +1,9 @@
 package com.test.dynseo_hackaton;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -18,7 +21,12 @@ import android.content.res.AssetManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.res.ResourcesCompat;
 
 public class SnakeEngine extends SurfaceView implements Runnable {
@@ -486,9 +494,37 @@ public class SnakeEngine extends SurfaceView implements Runnable {
                 if (heading != Heading.RIGHT)
                     heading = Heading.LEFT ;
                 break;
+            case R.id.pause_button:
+                showDialog( ((MainActivity)context) , "test");
             default:
                 break;
         }
+    }
+
+    public void showDialog(Activity activity, String msg) {
+        isPlaying = false;
+        draw();
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.pause_game);
+        TextView pauseMsg = (TextView) dialog.findViewById(R.id.pause_message);
+        Button quitButton = (Button) dialog.findViewById(R.id.quit_button);
+        quitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)context).finish();
+            }
+        });
+        Button resumeButton = (Button) dialog.findViewById(R.id.resume_button);
+        resumeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                resume();
+            }
+        });
+        dialog.show();
     }
 
 }
