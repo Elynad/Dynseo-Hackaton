@@ -4,4 +4,13 @@
     <string name="quit_game">Quit</string>
     <string name="pause_message">Do you wanna quit ?</string>
     <string name="pause_title">Paused</string>
+    <string name="score">Score : </string>
+
+    <!-- Buttons -->
+    <string name="easy">Easy</string>
+    <string name="medium">Medium</string>
+    <string name="hard">Hard</string>
+
+    <!-- Tags -->
+    <string name="level_param">LEVEL_PARAM</string>
 </resources>

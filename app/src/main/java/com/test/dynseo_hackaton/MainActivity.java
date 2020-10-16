@@ -1,22 +1,26 @@
 package com.test.dynseo_hackaton;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-
+import android.graphics.PixelFormat;
 import android.graphics.Point;
-import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private final static String TAG = "MainActivity" ;
+
     // -- PROPERTIES
+    int gameLevel ;
+
     // Declare an instance of SnakeEngine
     private SnakeEngine snakeEngine;
 
@@ -24,13 +28,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SurfaceView gameSurfaceView;
 
     // D-PAD BUTTONS
-    private AppCompatButton upButton;
-    private AppCompatButton downButton;
-    private AppCompatButton leftButton;
-    private AppCompatButton rightButton;
+
     private AppCompatButton pauseButton;
     private AppCompatButton pauseResumeButton;
     private AppCompatButton pauseQuitButton;
+    private AppCompatTextView scoreTextView;
+
 
 
     // -- VIEW LIFE CYCLE
@@ -38,22 +41,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        gameLevel = this.getIntent().getIntExtra(getString(R.string.level_param), 0);
+
         // Init game layout
         setContentView(R.layout.activity_main);
 
-        // Init Game View
+        // Init Game Surface View
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
-        gameSurfaceView = findViewById(R.id.gameSurfaceView);
+
+        SurfaceView gameSurfaceView = findViewById(R.id.game_surface_view);
         gameSurfaceView.getLayoutParams().width = (int)(width * 0.6) ;
         gameSurfaceView.getLayoutParams().height = (int)(height * 0.8) ;
         gameSurfaceView.setZOrderOnTop(true);
+        gameSurfaceView.getHolder().setFormat(PixelFormat.TRANSPARENT);
 
         // Init D-Pad buttons
 
         pauseButton = findViewById(R.id.pause_button);
+        ImageView backgroundImage = findViewById(R.id.game_background_image_view);
+        backgroundImage.getLayoutParams().width = (int)(width * 0.6) ;
+        backgroundImage.getLayoutParams().height = (int)(height * 0.8) ;
+
+        // Init Score text view
+        scoreTextView = findViewById(R.id.score_text_view);
+        String scoreText = getString(R.string.score) + " 0" ;
+        scoreTextView.setText(scoreText);
 
         // Get the pixel dimensions of the screen
         Display display = getWindowManager().getDefaultDisplay();
@@ -64,11 +79,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         size.y = gameSurfaceView.getLayoutParams().height;
 
         // Create a new instance of the SnakeEngine class
-        snakeEngine = new SnakeEngine(this, size, gameSurfaceView);
+        snakeEngine = new SnakeEngine(this, size, gameSurfaceView, gameLevel);
 
-        // Make snakeEngine the view of the Activity
-        //setContentView(snakeEngine);
+    }
 
+    public void setScore(final int score) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                String scoreText = getString(R.string.score) + " " + score ;
+                scoreTextView.setText(scoreText) ;
+            }
+        });
     }
 
     // Start the thread in snakeEngine
@@ -91,5 +113,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         snakeEngine.setHeading(view.getId());
     }
-
 }

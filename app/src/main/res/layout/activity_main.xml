@@ -5,21 +5,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context=".MainActivity">
 
     <SurfaceView
-        android:id="@+id/gameSurfaceView"
-        android:layout_width="690dp"
-        android:layout_height="533dp"
+
+        android:id="@+id/game_surface_view"
+        android:layout_width="1000dp"
+        android:layout_height="800dp"
         android:layout_marginStart="25dp"
         android:layout_marginLeft="25dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/rectangle_border_view"
-        app:layout_constraintEnd_toStartOf="@+id/left_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/game_background_image_view"
+        android:layout_width="100dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginLeft="25dp"
+        android:background="@drawable/background_image_dry_ground"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pause_button" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/score_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="45dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        android:text="@string/score"
+        android:textColor="@color/colorBlack"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
