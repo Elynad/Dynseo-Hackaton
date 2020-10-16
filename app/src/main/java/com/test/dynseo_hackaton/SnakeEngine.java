@@ -102,6 +102,9 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     // Some paint for our canvas
     private Paint paint ;
 
+    private ArrayList<Drawable> preys ;
+    private int preysDrawableIndex ;
+
     public SnakeEngine(Context context, Point size, SurfaceView gameSurfaceView) {
         super(context) ;
 
@@ -143,6 +146,11 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         // Initialize obstacles
         obstacleXs = new ArrayList<>() ;
         obstacleYs = new ArrayList<>() ;
+
+        preys = new ArrayList<>() ;
+        preys.add(ResourcesCompat.getDrawable(getResources(), R.drawable.prey_1, null));
+        preys.add(ResourcesCompat.getDrawable(getResources(), R.drawable.prey_2, null));
+        preys.add(ResourcesCompat.getDrawable(getResources(), R.drawable.prey_3, null));
 
         // Start the game
         newGame();
@@ -228,6 +236,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             if (snakeXs[i] == preyX && snakeYs[i] == preyY)
                 spawnPrey();
         }
+        preysDrawableIndex = random.nextInt(preys.size());
     }
 
     /**
@@ -396,51 +405,57 @@ public class SnakeEngine extends SurfaceView implements Runnable {
                     break ;
             }
             Drawable drawable = ResourcesCompat.getDrawable(getResources(), headDrawableId, null) ;
-            drawable.setBounds(
-                    snakeXs[0] * blockSize,
-                    snakeYs[0] * blockSize,
-                    (snakeXs[0] * blockSize) + blockSize,
-                    (snakeYs[0] * blockSize) + blockSize);
-            drawable.draw(canvas);
+            if (drawable != null) {
+                drawable.setBounds(
+                        snakeXs[0] * blockSize,
+                        snakeYs[0] * blockSize,
+                        (snakeXs[0] * blockSize) + blockSize,
+                        (snakeYs[0] * blockSize) + blockSize);
+                drawable.draw(canvas);
+            }
 
-            // Draw the snake one block at a time
+            // Draw the snake body one block at a time
             int j = 1 ;
             while (j < snakeLength) {
                 drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.snake_body, null);
-                drawable.setBounds(
-                        snakeXs[j] * blockSize,
-                        snakeYs[j] * blockSize,
-                        (snakeXs[j] * blockSize) + blockSize,
-                        (snakeYs[j] * blockSize) + blockSize);
-                drawable.draw(canvas);
+                if (drawable != null) {
+                    drawable.setBounds(
+                            snakeXs[j] * blockSize,
+                            snakeYs[j] * blockSize,
+                            (snakeXs[j] * blockSize) + blockSize,
+                            (snakeYs[j] * blockSize) + blockSize);
+                    drawable.draw(canvas);
+                }
                 j++;
             }
 
-            // Set the color of the paint to draw the prey
-            paint.setColor(Color.argb(255, 255, 0, 0)); // TODO : Set correct colors
-
             // Draw the prey
-            canvas.drawRect(
+            drawable = preys.get(preysDrawableIndex);
+            drawable.setBounds(
                     preyX * blockSize,
-                    (preyY * blockSize),
+                    preyY * blockSize,
                     (preyX * blockSize) + blockSize,
-                    (preyY * blockSize) + blockSize,
-                    paint
+                    (preyY * blockSize) + blockSize
             );
+            drawable.draw(canvas);
 
             // Set the color of the paint to draw obstacles
             paint.setColor(Color.argb(255, 0, 0, 0));
 
             // Draw the obstacles
+            drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.wall,
+                    null);
             for (int i = 0 ; i < obstacleXs.size() ; i++) {
                 // TODO : Draw our custom sprite instead
-                canvas.drawRect(
-                        obstacleXs.get(i) * blockSize,
-                        (obstacleYs.get(i) * blockSize),
-                        (obstacleXs.get(i) * blockSize) + blockSize,
-                        (obstacleYs.get(i) * blockSize) + blockSize,
-                        paint
-                );
+                if (drawable != null) {
+                    drawable.setBounds(
+                            obstacleXs.get(i) * blockSize,
+                            obstacleYs.get(i) * blockSize,
+                            (obstacleXs.get(i) * blockSize) + blockSize,
+                            (obstacleYs.get(i) * blockSize) + blockSize
+                    );
+                    drawable.draw(canvas);
+                }
             }
 
             // Unlock the canvas and reveal the graphics for this frame
