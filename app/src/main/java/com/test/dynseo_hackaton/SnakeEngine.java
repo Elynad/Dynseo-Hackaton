@@ -5,6 +5,7 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -31,9 +32,9 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private Context context ;
 
     // Sound effects handle
-    private SoundPool soundPool ;
-    private int eatPrey = -1 ;
-    private int snakeCrash = -1 ;
+    private MediaPlayer eatPreyMediaPlayer ;
+    private MediaPlayer crashMediaPlayer ;
+
 
     // Track movement heading
     public enum Heading {
@@ -119,20 +120,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         numBlocksHigh = screenY / blockSize ;
 
         // Set the sound up
-        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
-        try {
-            AssetManager assetManager = context.getAssets();
-            AssetFileDescriptor assetFileDescriptor ;
-
-            // Prepare the two sounds in memory
-            assetFileDescriptor = assetManager.openFd(""); // TODO : Add a sound
-            eatPrey = soundPool.load(assetFileDescriptor, 0) ;
-
-            assetFileDescriptor = assetManager.openFd("") ; // TODO : Add a sound
-            snakeCrash = soundPool.load(assetFileDescriptor, 0);
-        } catch (IOException exception) {
-            Log.e(TAG, "EXCEPTION : " + exception.toString());
-        }
+        eatPreyMediaPlayer = MediaPlayer.create(context, R.raw.hiss);
+        crashMediaPlayer = MediaPlayer.create(context, R.raw.roblox_death);
 
         // Initialize the drawing objects
         surfaceHolder = gameSurfaceView.getHolder();
@@ -273,7 +262,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         spawnPrey();
         spawnObstacle();
         score += 1 ;
-        soundPool.play(eatPrey, 1, 1, 0, 0, 1);
+        ((MainActivity) context).setScore(score);
+        eatPreyMediaPlayer.start();
     }
 
     /**
@@ -358,8 +348,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         moveSnake();
 
         if (detectDeath()) {
-            soundPool.play(snakeCrash, 1, 1, 0, 0, 1);
-
+            crashMediaPlayer.start();
             newGame();  // TODO : End the game ?
         }
     }
@@ -438,9 +427,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
                     (preyY * blockSize) + blockSize
             );
             drawable.draw(canvas);
-
-            // Set the color of the paint to draw obstacles
-            paint.setColor(Color.argb(255, 0, 0, 0));
 
             // Draw the obstacles
             drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.wall,

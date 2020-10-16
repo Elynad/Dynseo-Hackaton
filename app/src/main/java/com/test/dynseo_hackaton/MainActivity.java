@@ -1,5 +1,6 @@
 package com.test.dynseo_hackaton;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -9,12 +10,16 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.TextView;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private final static String TAG = "MainActivity" ;
 
     // -- PROPERTIES
     // Declare an instance of SnakeEngine
@@ -28,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private AppCompatButton downButton;
     private AppCompatButton leftButton;
     private AppCompatButton rightButton;
+    private TextView scoreText ;
 
 
     // -- VIEW LIFE CYCLE
@@ -47,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gameSurfaceView.getLayoutParams().width = (int)(width * 0.6) ;
         gameSurfaceView.getLayoutParams().height = (int)(height * 0.8) ;
         gameSurfaceView.setZOrderOnTop(true);
+
+        scoreText = findViewById(R.id.scoreText);
 
         // Init D-Pad buttons
         upButton = findViewById(R.id.up_button);
@@ -69,6 +77,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Make snakeEngine the view of the Activity
         //setContentView(snakeEngine);
 
+    }
+
+    public void setScore(final int score) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                String text = "SCORE = " + score ;
+                scoreText.setText(text) ;
+            }
+        });
     }
 
     // Start the thread in snakeEngine
