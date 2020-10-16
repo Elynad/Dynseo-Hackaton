@@ -1,10 +1,12 @@
 package com.test.dynseo_hackaton;
 
+
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
@@ -17,6 +19,9 @@ import android.content.res.AssetManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+
+
+import androidx.core.content.res.ResourcesCompat;
 
 
 public class SnakeEngine extends SurfaceView implements Runnable {
@@ -45,20 +50,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     // Movement to keep ; start to the right
     private Heading heading = Heading.RIGHT ;
 
-    // Screen size
-    private int screenX ;
-    private int screenY ;
-
-    // Snake size
-    private int snakeLength ;
-
-    // Obstacle count
-    private int obstaclesCount ;
-
-    // Prey position
-    private int preyX ;
-    private int preyY ;
-
     // The size in pixels of a snake segment
     private int blockSize ;
 
@@ -81,10 +72,24 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private int[] snakeXs ;
     // snakeYs will hold the vertical coordinates of each segment of the snake.
     private int[] snakeYs ;
+    // Screen size
+    private int screenX ;
+    private int screenY ;
+    // Snake size
+    private int snakeLength ;
 
     /* Obstacles */
     private ArrayList<Integer> obstacleXs ;
     private ArrayList<Integer> obstacleYs ;
+    // Obstacle count
+    private int obstaclesCount ;
+
+    /* Preys */
+    private ArrayList<Drawable> preys ;
+    private int preysDrawableIndex ;
+    // Prey position
+    private int preyX ;
+    private int preyY ;
 
     /* DRAWING */
     // Is the game playing ?
@@ -139,6 +144,11 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         // Initialize obstacles
         obstacleXs = new ArrayList<>() ;
         obstacleYs = new ArrayList<>() ;
+
+        preys = new ArrayList<>() ;
+        preys.add(ResourcesCompat.getDrawable(getResources(), R.drawable.prey_1, null));
+        preys.add(ResourcesCompat.getDrawable(getResources(), R.drawable.prey_2, null));
+        preys.add(ResourcesCompat.getDrawable(getResources(), R.drawable.prey_3, null));
 
         // Start the game
         newGame();
@@ -225,6 +235,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             if (snakeXs[i] == preyX && snakeYs[i] == preyY)
                 spawnPrey();
         }
+        preysDrawableIndex = random.nextInt(preys.size());
     }
 
     /**
@@ -240,7 +251,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             i = 0;
         Log.d(TAG, "obstaclesXs size = " + obstacleXs.size() + " ; obstaclesCount = " + obstaclesCount);
         while (i < obstaclesCount) {
-             Log.d(TAG, "Trying to insert new element at index " + i) ;
+            Log.d(TAG, "Trying to insert new element at index " + i) ;
             Random random = new Random() ;
             obstacleXs.add(random.nextInt(NUM_BLOCKS_WIDE - 1) + 1);
             obstacleYs.add(random.nextInt(numBlocksHigh - 1) + 1);
@@ -390,89 +401,131 @@ public class SnakeEngine extends SurfaceView implements Runnable {
                         (snakeYs[i] * blockSize) + blockSize,
                         paint
                 );
-            }
 
-            // Set the color of the paint to draw the prey
-            paint.setColor(Color.argb(255, 255, 0, 0)); // TODO : Set correct colors
+                // Draw the head of the snake, given the direction
+                int headDrawableId = 0 ;
+                switch (heading) {
+                    case UP:
+                        headDrawableId = R.drawable.snake_head_up ;
+                        break ;
+                    case RIGHT:
+                        headDrawableId = R.drawable.snake_head_right ;
+                        break ;
+                    case DOWN:
+                        headDrawableId = R.drawable.snake_head_down ;
+                        break ;
+                    case LEFT:
+                        headDrawableId = R.drawable.snake_head_left ;
+                        break ;
+                }
+                Drawable drawable = ResourcesCompat.getDrawable(getResources(), headDrawableId, null) ;
+                if (drawable != null) {
+                    drawable.setBounds(
+                            snakeXs[0] * blockSize,
+                            snakeYs[0] * blockSize,
+                            (snakeXs[0] * blockSize) + blockSize,
+                            (snakeYs[0] * blockSize) + blockSize);
+                    drawable.draw(canvas);
+                }
 
-            // Draw the prey
-            paint.setStyle(Paint.Style.FILL);
-            canvas.drawRect(
-                    preyX * blockSize,
-                    (preyY * blockSize),
-                    (preyX * blockSize) + blockSize,
-                    (preyY * blockSize) + blockSize,
-                    paint
-            );
+                // Draw the snake body one block at a time
+                int j = 1 ;
+                while (j < snakeLength) {
+                    drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.snake_body, null);
+                    if (drawable != null) {
+                        drawable.setBounds(
+                                snakeXs[j] * blockSize,
+                                snakeYs[j] * blockSize,
+                                (snakeXs[j] * blockSize) + blockSize,
+                                (snakeYs[j] * blockSize) + blockSize);
+                        drawable.draw(canvas);
+                    }
+                    j++;
+                }
 
-            // Set the color of the paint to draw obstacles
-            paint.setColor(Color.argb(255, 0, 0, 0));
-
-            // Draw the obstacles
-            for (int i = 0 ; i < obstacleXs.size() ; i++) {
-                // TODO : Draw our custom sprite instead
-                canvas.drawRect(
-                        obstacleXs.get(i) * blockSize,
-                        (obstacleYs.get(i) * blockSize),
-                        (obstacleXs.get(i) * blockSize) + blockSize,
-                        (obstacleYs.get(i) * blockSize) + blockSize,
-                        paint
+                // Draw the prey
+                drawable = preys.get(preysDrawableIndex);
+                drawable.setBounds(
+                        preyX * blockSize,
+                        preyY * blockSize,
+                        (preyX * blockSize) + blockSize,
+                        (preyY * blockSize) + blockSize
                 );
+                drawable.draw(canvas);
+
+                // Set the color of the paint to draw obstacles
+                paint.setColor(Color.argb(255, 0, 0, 0));
+
+                // Draw the obstacles
+                drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.wall,
+                        null);
+                for (i = 0 ; i < obstacleXs.size() ; i++) {
+                    // TODO : Draw our custom sprite instead
+                    if (drawable != null) {
+                        drawable.setBounds(
+                                obstacleXs.get(i) * blockSize,
+                                obstacleYs.get(i) * blockSize,
+                                (obstacleXs.get(i) * blockSize) + blockSize,
+                                (obstacleYs.get(i) * blockSize) + blockSize
+                        );
+                        drawable.draw(canvas);
+                    }
+                }
+
+                Rect r = new Rect(0, 0, canvas.getWidth(), canvas.getHeight());
+                // Draw border of surface view
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setStrokeWidth(15);
+                paint.setColor(Color.BLACK);
+                canvas.drawRect(r, paint);
+
+                // Unlock the canvas and reveal the graphics for this frame
+                surfaceHolder.unlockCanvasAndPost(canvas);
+            }
+        }
+    }
+
+        /**
+         *  Checks if [nextFrameTime] variable has been exceeded by the actual current time. If it does,
+         *  then a new time is retrieved and put back in [nextFrameTime].
+         *  @return boolean - True if we need to execute draw and update.
+         */
+        public boolean updateRequired() {
+            // Are we due to update the frame ?
+            if (nextFrameTime <= System.currentTimeMillis()) {
+                // Tenth of a second has passed
+
+                // Setup when the next update will be triggered
+                nextFrameTime = System.currentTimeMillis() + MILLIS_PER_SECOND / FPS ;
+
+                // Returns true so [update()] & [draw()] functions are returned
+                return true ;
             }
 
-            Rect r = new Rect(0, 0, canvas.getWidth(), canvas.getHeight());
-            // Draw border of surface view
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(15);
-            paint.setColor(Color.BLACK);
-            canvas.drawRect(r, paint);
-
-            // Unlock the canvas and reveal the graphics for this frame
-            surfaceHolder.unlockCanvasAndPost(canvas);
-        }
-    }
-
-    /**
-     *  Checks if [nextFrameTime] variable has been exceeded by the actual current time. If it does,
-     *  then a new time is retrieved and put back in [nextFrameTime].
-     *  @return boolean - True if we need to execute draw and update.
-     */
-    public boolean updateRequired() {
-        // Are we due to update the frame ?
-        if (nextFrameTime <= System.currentTimeMillis()) {
-            // Tenth of a second has passed
-
-            // Setup when the next update will be triggered
-            nextFrameTime = System.currentTimeMillis() + MILLIS_PER_SECOND / FPS ;
-
-            // Returns true so [update()] & [draw()] functions are returned
-            return true ;
+            return false ;
         }
 
-        return false ;
-    }
-
-    public void setHeading(int id) {
-        switch (id) {
-            case R.id.up_button:
-                if (heading != Heading.DOWN)
-                    heading = Heading.UP ;
-                break;
-            case R.id.down_button:
-                if (heading != Heading.UP)
-                    heading = Heading.DOWN ;
-                break;
-            case R.id.right_button:
-                if (heading != Heading.LEFT)
-                    heading = Heading.RIGHT ;
-                break;
-            case R.id.left_button:
-                if (heading != Heading.RIGHT)
-                    heading = Heading.LEFT ;
-                break;
-            default:
-                break;
+        public void setHeading(int id) {
+            switch (id) {
+                case R.id.up_button:
+                    if (heading != Heading.DOWN)
+                        heading = Heading.UP ;
+                    break;
+                case R.id.down_button:
+                    if (heading != Heading.UP)
+                        heading = Heading.DOWN ;
+                    break;
+                case R.id.right_button:
+                    if (heading != Heading.LEFT)
+                        heading = Heading.RIGHT ;
+                    break;
+                case R.id.left_button:
+                    if (heading != Heading.RIGHT)
+                        heading = Heading.LEFT ;
+                    break;
+                default:
+                    break;
+            }
         }
-    }
 
-}
+    }
