@@ -1,35 +1,35 @@
 package com.test.dynseo_hackaton;
 
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.graphics.Point;
-import android.graphics.drawable.Drawable;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.SoundPool;
-import android.util.Log;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import android.content.res.AssetManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
+import android.util.Log;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
 import androidx.core.content.res.ResourcesCompat;
 
+import java.util.ArrayList;
+import java.util.Random;
+
+
 public class SnakeEngine extends SurfaceView implements Runnable {
 
+    // -- PROPERTIES
     private final static String TAG = "SnakeEngine" ;
 
     // Game thread for the main game loop
     private Thread thread = null ;
 
     private Context context ;
+
+    private Random random ;
 
     // Sound effects handle
     private MediaPlayer eatPreyMediaPlayer ;
@@ -47,20 +47,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     // Movement to keep ; start to the right
     private Heading heading = Heading.RIGHT ;
 
-    // Screen size
-    private int screenX ;
-    private int screenY ;
-
-    // Snake size
-    private int snakeLength ;
-
-    // Obstacle count
-    private int obstaclesCount ;
-
-    // Prey position
-    private int preyX ;
-    private int preyY ;
-
     // The size in pixels of a snake segment
     private int blockSize ;
 
@@ -70,6 +56,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
     // Control pausing between updates
     private long nextFrameTime ;
+
     // Update the game 10 times per second
     private final long FPS = 7 ;
     private final long MILLIS_PER_SECOND = 1000 ; // TODO : Might be useless
@@ -78,38 +65,47 @@ public class SnakeEngine extends SurfaceView implements Runnable {
     private int score ;
 
     /* Location in the grid of all segments of the snake */
-
     // snakeXs will hold the horizontal coordinates of each segment of the snake
     private int[] snakeXs ;
-
     // snakeYs will hold the vertical coordinates of each segment of the snake.
     private int[] snakeYs ;
+    // Screen size
+    private int screenX ;
+    private int screenY ;
+    // Snake size
+    private int snakeLength ;
 
     /* Obstacles */
     private ArrayList<Integer> obstacleXs ;
     private ArrayList<Integer> obstacleYs ;
+    // Obstacle count
+    private int obstaclesCount ;
+
+    /* Preys */
+    private ArrayList<Drawable> preys ;
+    private int preysDrawableIndex ;
+    // Prey position
+    private int preyX ;
+    private int preyY ;
 
     /* DRAWING */
-
     // Is the game playing ?
     private volatile boolean isPlaying ;
-
     // Canvas for our paint
     private Canvas canvas ;
-
     // Required to use canvas
     private SurfaceHolder surfaceHolder ;
-
     // Some paint for our canvas
     private Paint paint ;
 
-    private ArrayList<Drawable> preys ;
-    private int preysDrawableIndex ;
 
+    // -- INIT
     public SnakeEngine(Context context, Point size, SurfaceView gameSurfaceView) {
         super(context) ;
 
         this.context = context ;
+
+        random = new Random() ;
 
         screenX = size.x ;
         screenY = size.y;
@@ -145,6 +141,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
         newGame();
     }
 
+
+    // -- METHODS
     @Override
     public void run() {
 
@@ -190,7 +188,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
      *  [draw] methods run.
      */
     public void newGame() {
-
         // Start with a single snake segment
         snakeLength = 3 ;
         snakeXs[0] = NUM_BLOCKS_WIDE / 2 ;
@@ -201,6 +198,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
 
         // Reset the score
         score = 0;
+        ((MainActivity)context).setScore(score);
 
         // Setup nextFrameTime so an update is triggered
         nextFrameTime = System.currentTimeMillis() ;
@@ -217,7 +215,6 @@ public class SnakeEngine extends SurfaceView implements Runnable {
      *  TODO :      constructor.
      */
     public void spawnPrey() {
-        Random random = new Random() ;
         preyX = random.nextInt(NUM_BLOCKS_WIDE - 1) + 1;
         preyY = random.nextInt(numBlocksHigh - 1) + 1 ;
 
@@ -241,8 +238,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             i = 0;
         Log.d(TAG, "obstaclesXs size = " + obstacleXs.size() + " ; obstaclesCount = " + obstaclesCount);
         while (i < obstaclesCount) {
-             Log.d(TAG, "Trying to insert new element at index " + i) ;
-            Random random = new Random() ;
+            Log.d(TAG, "Trying to insert new element at index " + i) ;
             obstacleXs.add(random.nextInt(NUM_BLOCKS_WIDE - 1) + 1);
             obstacleYs.add(random.nextInt(numBlocksHigh - 1) + 1);
             // If the obstacle is on the same point than the prey, decrease i to generate new
@@ -368,14 +364,7 @@ public class SnakeEngine extends SurfaceView implements Runnable {
             canvas = surfaceHolder.lockCanvas();
 
             // Fill the screen with color
-            canvas.drawColor(Color.argb(255, 26, 128, 182)); // TODO : Set correct colors
-
-            // Set the color of the paint to draw the snake
-            paint.setColor(Color.argb(255, 255, 255, 255)); // TODO : Set correct color
-
-            // Scale the HUD text
-            paint.setTextSize(70) ;
-            canvas.drawText("Score : " + score, 10, 70, paint); // TODO : Might be useless, use Stim'Art score display
+            canvas.drawColor(0, PorterDuff.Mode.CLEAR);
 
             // Draw the head of the snake, given the direction
             int headDrawableId = 0 ;
@@ -443,6 +432,13 @@ public class SnakeEngine extends SurfaceView implements Runnable {
                     drawable.draw(canvas);
                 }
             }
+
+            Rect r = new Rect(0, 0, canvas.getWidth(), canvas.getHeight());
+            // Draw border of surface view
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(15);
+            paint.setColor(Color.BLACK);
+            canvas.drawRect(r, paint);
 
             // Unlock the canvas and reveal the graphics for this frame
             surfaceHolder.unlockCanvasAndPost(canvas);

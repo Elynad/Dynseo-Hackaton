@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Dynseo_Hackaton</string>
+    <string name="score">Score : </string>
 </resources>
