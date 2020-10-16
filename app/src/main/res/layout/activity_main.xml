@@ -37,7 +37,7 @@
         android:layout_marginTop="45dp"
         android:text="@string/score"
         android:textColor="@color/colorBlack"
-        android:textSize="25sp"
+        android:textSize="35sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/game_surface_view"
         app:layout_constraintTop_toTopOf="parent" />
@@ -62,43 +62,47 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <androidx.appcompat.widget.AppCompatButton
+        <ImageButton
             android:id="@+id/up_button"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:background="@drawable/arrow_up"
+            android:background="@color/white"
             android:onClick="onClick"
+            android:src="@drawable/arrow_up"
             tools:layout_editor_absoluteX="805dp"
             tools:layout_editor_absoluteY="324dp" />
 
-        <androidx.appcompat.widget.AppCompatButton
+        <ImageButton
             android:id="@+id/down_button"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_marginTop="64dp"
-            android:background="@drawable/arrow_down"
+            android:background="@color/white"
             android:onClick="onClick"
+            android:src="@drawable/arrow_down"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:layout_editor_absoluteX="805dp" />
 
     </LinearLayout>
 
-    <androidx.appcompat.widget.AppCompatButton
+    <ImageButton
         android:id="@+id/left_button"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginBottom="140dp"
-        android:background="@drawable/arrow_left"
+        android:background="@color/white"
+        android:src="@drawable/arrow_left"
         android:onClick="onClick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <ImageButton
         android:id="@+id/right_button"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginBottom="140dp"
-        android:background="@drawable/arrow_right"
+        android:background="@color/white"
+        android:src="@drawable/arrow_right"
         android:onClick="onClick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/linearLayout" />
