@@ -236,8 +236,8 @@ public class SnakeEngine extends SurfaceView implements Runnable {
      *  The number of obstacle shall be the score divided by 10 (1 obstacle for every 10 points).
      */
     public void spawnObstacle() {
-        // The number of obstacles is the score divided by 10.
-        obstaclesCount = score / 10;
+        // The number of obstacles is the score divided by 10 for medium, divided by 5 for hard.
+        obstaclesCount = score / (10 / level);
         int obstaclesToSpawnCount = obstaclesCount - obstacleXs.size() ;
         Log.d(TAG, "Obstacles to spawn count = " + obstaclesToSpawnCount) ;
 
